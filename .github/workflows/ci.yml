@@ -1,0 +1,37 @@
+name: ci
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+  schedule:
+    - cron:  '0 */8 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+
+      - name: kubeadm config images list
+        run: |
+          # sudo apt-get -y update
+          # sudo apt-get -y install jq ca-certificates curl jq libgpgme11
+          tags=$(curl --retry 3 -fsSL "https://api.github.com/repos/kubernetes/kubernetes/releases?per_page=100&page=1" | jq -r '.[].tag_name' | grep -v "rc\|beta\|alpha" )
+          for RELEASE in $tags; do
+            sudo curl --retry 3 -fsSL -o /usr/bin/kubeadm https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/kubeadm
+            sudo chmod +x /usr/bin/kubeadm
+            kubeadm config images list 2> /dev/null > kubeadm-${RELEASE}.txt
+          done
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v7
+        with:
+          author_name: dyrnq
+          author_email: dyrnq@qq.com
+          message: 'kubeadm config images list'
+          add: 'kubeadm*.txt --force'
