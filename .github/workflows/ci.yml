@@ -23,7 +23,8 @@ jobs:
           # sudo apt-get -y install jq ca-certificates curl jq libgpgme11
           tags=$(curl --retry 3 -fsSL "https://api.github.com/repos/kubernetes/kubernetes/releases?per_page=100&page=1" | jq -r '.[].tag_name' | grep -v "rc\|beta\|alpha" )
           for RELEASE in $tags; do
-            sudo curl --retry 3 -fsSL -o /usr/bin/kubeadm https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/kubeadm
+            # sudo curl --retry 3 -fsSL -o /usr/bin/kubeadm https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/kubeadm
+            sudo curl --retry 3 -fsSL -o /usr/bin/kubeadm https://dl.k8s.io/${RELEASE}/bin/linux/amd64/kubeadm
             sudo chmod +x /usr/bin/kubeadm
             kubeadm config images list 2> /dev/null > kubeadm-${RELEASE}.txt
           done
