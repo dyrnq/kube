@@ -4,4 +4,4 @@ registry.k8s.io/kube-scheduler:v1.33.7
 registry.k8s.io/kube-proxy:v1.33.7
 registry.k8s.io/coredns/coredns:v1.12.0
 registry.k8s.io/pause:3.10
-registry.k8s.io/etcd:3.5.21-0
+registry.k8s.io/etcd:3.5.24-0
